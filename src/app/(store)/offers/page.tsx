@@ -288,7 +288,7 @@ export default async function OffersPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => {
+            {products.map((product: any) => {
               const displayImage = product.images[0]?.url || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=400';
               const originalPrice = Number(product.price);
               const salePrice = product.salePrice ? Number(product.salePrice) : Math.round(originalPrice * 0.85);

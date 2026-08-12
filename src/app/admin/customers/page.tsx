@@ -35,9 +35,9 @@ export default async function AdminCustomersPage() {
     });
 
     // 2. Format customer items with fallbacks
-    const customers: CustomerItem[] = (rawCustomers || []).map((c) => {
+    const customers: CustomerItem[] = (rawCustomers || []).map((c: any) => {
       const orderList = c.orders || [];
-      const totalSpent = orderList.reduce((sum, ord) => sum + Number(ord?.grandTotal || 0), 0);
+      const totalSpent = orderList.reduce((sum: number, ord: any) => sum + Number(ord?.grandTotal || 0), 0);
       return {
         id: c.id,
         name: c.name || 'Customer',
@@ -46,7 +46,7 @@ export default async function AdminCustomersPage() {
         createdAt: c.createdAt ? c.createdAt.toISOString() : new Date().toISOString(),
         role: c.user?.role || 'CUSTOMER',
         isActive: c.user?.isActive ?? true,
-        addresses: (c.addresses || []).map((a) => ({
+        addresses: (c.addresses || []).map((a: any) => ({
           id: a.id,
           name: a.name || 'Address',
           line1: a.line1 || '',
@@ -56,7 +56,7 @@ export default async function AdminCustomersPage() {
           postalCode: a.postalCode || '',
           isDefault: Boolean(a.isDefault),
         })),
-        orders: orderList.map((o) => ({
+        orders: orderList.map((o: any) => ({
           id: o.id,
           orderNumber: o.orderNumber || 'CI-ORDER',
           grandTotal: Number(o.grandTotal || 0),

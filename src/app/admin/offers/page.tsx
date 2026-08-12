@@ -26,7 +26,7 @@ export default async function AdminOffersPage() {
   });
 
   const settings: Record<string, string> = {};
-  settingsRecords.forEach((s) => {
+  settingsRecords.forEach((s: any) => {
     settings[s.key] = s.value;
   });
 
