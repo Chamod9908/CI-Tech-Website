@@ -31,7 +31,7 @@ export default async function AboutPage() {
         <p className="text-xs sm:text-sm text-primary uppercase font-bold tracking-widest">Preserving Memories, Digitally & Physically</p>
       </div>
 
-      <div className="bg-white border border-gray-border rounded-2xl p-6 sm:p-8 shadow-xs leading-relaxed space-y-6">
+      <div className="bg-white border border-gray-border rounded-2xl p-6 sm:p-6 shadow-xs leading-relaxed space-y-6">
         <p className="text-sm text-dark font-medium whitespace-pre-line">
           {page?.content || 'C.I. Technologies & Color Lab is a premier print studio and custom framing provider in Sri Lanka.'}
         </p>
