@@ -1,20 +1,5 @@
 import type { Metadata } from "next";
-import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -43,7 +28,7 @@ export default async function RootLayout({
   const announcementBarBg = settings.announcement_bar_bg || '#f97316';
 
   return (
-    <html lang="en" suppressHydrationWarning className={`${outfit.variable} ${inter.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning className="antialiased">
       <head>
         <style id="colorlab-theme" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `
           :root {
