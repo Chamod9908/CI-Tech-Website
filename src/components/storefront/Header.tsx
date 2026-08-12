@@ -28,7 +28,7 @@ export default function Header({ session, announcement, settings }: HeaderProps)
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Shop', href: '/shop' },
-    { label: 'Offers', href: '/shop?filter=sale' },
+    { label: 'Offers', href: '/offers' },
     { label: 'Services', href: '/services' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },

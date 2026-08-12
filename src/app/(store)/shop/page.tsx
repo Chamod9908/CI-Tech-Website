@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button';
 import { getSession } from '@/lib/auth';
 import ShopSortSelect from '@/components/product/ShopSortSelect';
 import { QuickProductControls, QuickCategoryControls } from '@/components/admin/QuickAdminControls';
+import { getAllSiteSettings } from '@/lib/settings';
 
 export const revalidate = 0;
 
@@ -21,6 +22,8 @@ interface ShopPageProps {
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const session = await getSession();
   const isSuperAdmin = session?.role === 'SUPER_ADMIN';
+  const settings = await getAllSiteSettings();
+  const productCardBtnText = settings.product_card_btn_text || 'Create Your Own';
   const params = await searchParams;
   const search = params.search || '';
   const category = params.category || '';
@@ -53,7 +56,10 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   }
 
   if (filter === 'sale') {
-    whereClause.salePrice = { not: null };
+    whereClause.OR = [
+      { salePrice: { not: null } },
+      { isFeatured: true },
+    ];
   }
 
   // 3. Build Sorting Logic
@@ -220,6 +226,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                       productId={product.id}
                       isActive={product.isActive}
                       isSuperAdmin={isSuperAdmin}
+                      productName={product.name}
+                      currentPrice={Number(product.price)}
+                      currentSalePrice={product.salePrice ? Number(product.salePrice) : null}
                     />
 
                     {isSuperAdmin && (
@@ -270,8 +279,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                           )}
                         </div>
                         <Link href={`/product/${product.slug}`} className="shrink-0">
-                          <Button variant="primary" size="sm" className="w-full sm:w-auto px-3 py-1.5 rounded-md text-xs">
-                            Configure
+                          <Button variant="primary" size="sm" className="w-full sm:w-auto px-3 py-1.5 rounded-md text-xs font-bold">
+                            {productCardBtnText}
                           </Button>
                         </Link>
                       </div>

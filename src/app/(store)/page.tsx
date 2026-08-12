@@ -38,6 +38,16 @@ export default async function HomePage() {
   const heroSubtitle = settings.hero_subtitle || "Professional photo printing, high-end color studio lab services, customized mugs, custom premium photo framing, and corporate digital printing. Bring your photos to life with vivid color accuracy.";
   const heroImageUrl = settings.hero_image_url || "";
 
+  // Hero Card Customizable Settings
+  const heroBadgeText = settings.hero_badge_text || "Best Seller";
+  const heroBadgeBg = settings.hero_badge_bg || "#ef4444";
+  const heroPromoTitle = settings.hero_promo_title || (featuredProducts[0]?.name || "Custom Stickers & Labels");
+  const heroPromoCategory = settings.hero_promo_category || (featuredProducts[0]?.category?.name || "Business Printing");
+  const heroPromoPrice = settings.hero_promo_price || (featuredProducts[0] ? `Rs. ${Number(featuredProducts[0].price).toLocaleString('en-LK', { minimumFractionDigits: 2 })}` : "Rs. 1,200.00");
+  const heroPromoImage = settings.hero_promo_image || (featuredProducts[0]?.images[0]?.url || "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=400");
+  const heroPromoDesc = settings.hero_promo_desc || (featuredProducts[0]?.shortDescription || "High Quality • Durable");
+  const productCardBtnText = settings.product_card_btn_text || "Create Your Own";
+
   const standardsTitle = settings.standards_title || "Premium Studio Standards Since Day One";
   const standardsDesc = settings.standards_desc || "At C.I. Technologies & Color Lab, we use high-density printing machinery to guarantee precise details, deep blacks, and rich vibrant colors. We use authentic wooden framing materials and anti-glare matt glass to elevate your spaces.";
   const standardsPointsRaw = settings.standards_points || "Advanced Color Correction, Moisture Resistant Coating, Multi-Layer Quality Auditing, Safe Packaging (Wood Frames)";
@@ -68,35 +78,30 @@ export default async function HomePage() {
         )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
-          <div className="space-y-6 max-w-xl">
-            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3.5 py-1.5 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">Sri Lanka&apos;s Premium Color Lab</span>
+          {/* Main Hero Copy */}
+          <div className="space-y-6 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-xs font-extrabold tracking-wider uppercase text-gray-200">#colorlab99 Studio Services</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-              {heroTitle.includes('.') ? (
-                <>
-                  {heroTitle.split('.')[0]}.
-                  <span className="text-primary block mt-1">{heroTitle.split('.').slice(1).join('.')}</span>
-                </>
-              ) : (
-                <span className="text-primary">{heroTitle}</span>
-              )}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-none">
+              {heroTitle}
             </h1>
             
-            <p className="text-sm sm:text-base text-gray-text leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-300 max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
               {heroSubtitle}
             </p>
-            
-            <div className="flex flex-wrap gap-4 pt-2">
-              <Link href="/shop">
-                <Button variant="primary" size="lg">
-                  Shop Now <ArrowRight size={18} />
+
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+              <Link href="/shop" className="w-full sm:w-auto">
+                <Button size="lg" variant="primary" className="w-full sm:w-auto font-bold text-sm gap-2">
+                  Order Printing Now <ArrowRight size={16} />
                 </Button>
               </Link>
-              <Link href="/services">
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-dark">
+
+              <Link href="/services" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-gray-700 text-white hover:bg-white/10 font-bold text-sm">
                   Explore Services
                 </Button>
               </Link>
@@ -105,51 +110,31 @@ export default async function HomePage() {
           
           {/* Decorative Promo Card */}
           <div className="hidden lg:flex justify-center relative">
-            {featuredProducts[0] ? (
-              <Link href={`/product/${featuredProducts[0].slug}`} className="block">
-                <div className="w-80 h-96 bg-soft-dark border border-gray-800 rounded-2xl p-4 shadow-2xl relative rotate-3 hover:rotate-0 transition-all duration-300 cursor-pointer">
-                  <div className="w-full h-64 bg-gray-900 rounded-lg overflow-hidden relative border border-gray-800">
-                    <img
-                      src={featuredProducts[0].images[0]?.url || 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=400'}
-                      alt={featuredProducts[0].name}
-                      className="object-cover w-full h-full"
-                    />
-                    <div className="absolute top-2 right-2 bg-accent-red text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">
-                      Best Seller
-                    </div>
-                  </div>
-                  <div className="mt-4 space-y-1">
-                    <p className="text-[10px] text-primary uppercase font-bold tracking-widest">{featuredProducts[0].category?.name || 'Photo Prints'}</p>
-                    <h4 className="font-extrabold text-white text-base truncate">{featuredProducts[0].name}</h4>
-                    <div className="flex justify-between items-center pt-1.5">
-                      <span className="text-sm font-black text-white">Rs. {Number(featuredProducts[0].price).toLocaleString('en-LK', { minimumFractionDigits: 2 })}</span>
-                      <span className="text-[10px] text-gray-text">{featuredProducts[0].shortDescription || 'Custom layout'}</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ) : (
-              <div className="w-80 h-96 bg-soft-dark border border-gray-800 rounded-2xl p-4 shadow-2xl relative rotate-3 hover:rotate-0 transition-all duration-300">
+            <Link href={featuredProducts[0] ? `/product/${featuredProducts[0].slug}` : '/shop'} className="block">
+              <div className="w-80 h-96 bg-soft-dark border border-gray-800 rounded-2xl p-4 shadow-2xl relative rotate-3 hover:rotate-0 transition-all duration-300 cursor-pointer">
                 <div className="w-full h-64 bg-gray-900 rounded-lg overflow-hidden relative border border-gray-800">
                   <img
-                    src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=400"
-                    alt="Premium custom photo frames"
+                    src={heroPromoImage}
+                    alt={heroPromoTitle}
                     className="object-cover w-full h-full"
                   />
-                  <div className="absolute top-2 right-2 bg-accent-red text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">
-                    Best Seller
+                  <div
+                    className="absolute top-2 right-2 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase shadow-xs tracking-wider"
+                    style={{ backgroundColor: heroBadgeBg }}
+                  >
+                    {heroBadgeText}
                   </div>
                 </div>
                 <div className="mt-4 space-y-1">
-                  <p className="text-[10px] text-primary uppercase font-bold tracking-widest">Photo Frames</p>
-                  <h4 className="font-extrabold text-white text-base">Custom Photo Frame</h4>
+                  <p className="text-[10px] text-primary uppercase font-bold tracking-widest">{heroPromoCategory}</p>
+                  <h4 className="font-extrabold text-white text-base truncate">{heroPromoTitle}</h4>
                   <div className="flex justify-between items-center pt-1.5">
-                    <span className="text-sm font-black text-white">Rs. 1,200.00</span>
-                    <span className="text-[10px] text-gray-text">Sizes up to 12x18</span>
+                    <span className="text-sm font-black text-white">{heroPromoPrice}</span>
+                    <span className="text-[10px] text-gray-text truncate max-w-[120px]">{heroPromoDesc}</span>
                   </div>
                 </div>
               </div>
-            )}
+            </Link>
             
             {/* Absolute offset item */}
             {(() => {
@@ -288,8 +273,8 @@ export default async function HomePage() {
                         )}
                       </div>
                       <Link href={`/product/${product.slug}`}>
-                        <Button variant="primary" size="sm" className="px-3 py-1.5 rounded-md">
-                          Configure
+                        <Button variant="primary" size="sm" className="px-3 py-1.5 rounded-md text-xs font-bold">
+                          {productCardBtnText}
                         </Button>
                       </Link>
                     </div>
@@ -414,17 +399,6 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
-      {/* 7. Sticky WhatsApp Support Floating CTA */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20ba5a] text-white p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
-        aria-label="Contact WhatsApp"
-      >
-        <MessageCircle size={28} />
-      </a>
     </div>
   );
 }

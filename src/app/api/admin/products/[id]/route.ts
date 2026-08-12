@@ -34,13 +34,14 @@ export async function PATCH(
       shortDescription,
       price,
       costPrice,
+      salePrice,
       stock,
       lowStockThreshold,
       imageUrl,
       options, // Array of { name, values: Array of { value, priceAdjustment } }
     } = body;
 
-    if (!name || !sku || !categoryId || !price || !costPrice) {
+    if (!name || !sku || !categoryId || price === undefined) {
       return NextResponse.json({ error: 'Missing required product parameters' }, { status: 400 });
     }
 
@@ -56,7 +57,8 @@ export async function PATCH(
           description,
           shortDescription,
           price: Number(price),
-          costPrice: Number(costPrice),
+          costPrice: costPrice !== undefined && costPrice !== null ? Number(costPrice) : 0,
+          salePrice: salePrice !== undefined && salePrice !== null && salePrice !== '' ? Number(salePrice) : null,
           stock: Number(stock || 0),
           lowStockThreshold: Number(lowStockThreshold || 5),
         },

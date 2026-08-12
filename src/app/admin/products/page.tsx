@@ -94,7 +94,8 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
                   <th className="p-4">Product Name</th>
                   <th className="p-4">Category</th>
                   <th className="p-4 text-right">Cost Price</th>
-                  <th className="p-4 text-right">Selling Price</th>
+                  <th className="p-4 text-right">Regular Price</th>
+                  <th className="p-4 text-right">Sale Price</th>
                   <th className="p-4 text-center">Stock Level</th>
                   <th className="p-4 text-center">Status</th>
                   <th className="p-4 text-center">Actions</th>
@@ -103,6 +104,7 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
               <tbody className="divide-y divide-gray-100 font-medium text-dark">
                 {products.map((p) => {
                   const isLowStock = p.stock <= p.lowStockThreshold;
+                  const hasSale = Boolean(p.salePrice);
                   return (
                     <tr key={p.id} className="hover:bg-bg-light/40 transition-colors">
                       <td className="p-4 font-bold text-gray-text">{p.sku}</td>
@@ -118,8 +120,17 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
                       <td className="p-4 text-right text-gray-text">
                         Rs. {Number(p.costPrice).toLocaleString('en-LK', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="p-4 text-right font-bold text-primary">
+                      <td className="p-4 text-right font-bold text-dark">
                         Rs. {Number(p.price).toLocaleString('en-LK', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="p-4 text-right font-black">
+                        {hasSale ? (
+                          <span className="text-accent-red bg-red-50 border border-red-100 px-2 py-0.5 rounded-md text-xs">
+                            Rs. {Number(p.salePrice).toLocaleString('en-LK', { minimumFractionDigits: 2 })}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 font-medium text-xs">-</span>
+                        )}
                       </td>
                       <td className="p-4 text-center font-bold">
                         <span className={`px-2 py-1 rounded font-extrabold ${isLowStock ? 'bg-red-50 text-accent-red border border-red-100' : 'text-dark'}`}>

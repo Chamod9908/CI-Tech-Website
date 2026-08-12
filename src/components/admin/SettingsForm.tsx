@@ -44,6 +44,21 @@ export default function SettingsForm({ initialSettings, initialFaqs }: SettingsF
   const [primaryColor, setPrimaryColor] = useState(initialSettings.primary_color || '#f97316');
   const [announcementBarBg, setAnnouncementBarBg] = useState(initialSettings.announcement_bar_bg || '#f97316');
 
+  // Hero Featured 3D Promo Card states
+  const [heroBadgeText, setHeroBadgeText] = useState(initialSettings.hero_badge_text || 'BEST SELLER');
+  const [heroBadgeBg, setHeroBadgeBg] = useState(initialSettings.hero_badge_bg || '#ef4444');
+  const [heroPromoTitle, setHeroPromoTitle] = useState(initialSettings.hero_promo_title || 'Custom Stickers & Labels');
+  const [heroPromoCategory, setHeroPromoCategory] = useState(initialSettings.hero_promo_category || 'BUSINESS PRINTING');
+  const [heroPromoPrice, setHeroPromoPrice] = useState(initialSettings.hero_promo_price || 'Rs. 1,200.00');
+  const [heroPromoDesc, setHeroPromoDesc] = useState(initialSettings.hero_promo_desc || 'Custom Custom Stickers & Labels made premium in Sri Lanka.');
+  const [heroPromoImage, setHeroPromoImage] = useState(initialSettings.hero_promo_image || '');
+
+  const [isUploadingPromoImage, setIsUploadingPromoImage] = useState(false);
+  const [promoImageUploadError, setPromoImageUploadError] = useState('');
+
+  // Product Grid Action Button customizer state
+  const [productCardBtnText, setProductCardBtnText] = useState(initialSettings.product_card_btn_text || 'Create Your Own');
+
   // Premium Studio Standards customizer states
   const [standardsTitle, setStandardsTitle] = useState(initialSettings.standards_title || 'Premium Studio Standards Since Day One');
   const [standardsDesc, setStandardsDesc] = useState(initialSettings.standards_desc || 'At C.I. Technologies & Color Lab, we use high-density printing machinery...');
@@ -150,6 +165,35 @@ export default function SettingsForm({ initialSettings, initialFaqs }: SettingsF
     }
   };
 
+  const handlePromoImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingPromoImage(true);
+    setPromoImageUploadError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setHeroPromoImage(data.url);
+      } else {
+        setPromoImageUploadError(data.error || 'Failed to upload card image');
+      }
+    } catch {
+      setPromoImageUploadError('Network error uploading file');
+    } finally {
+      setIsUploadingPromoImage(false);
+    }
+  };
+
   // FAQ logic
   const handleAddFaq = () => {
     setFaqs([...faqs, { id: 'new-' + Date.now(), question: '', answer: '' }]);
@@ -193,10 +237,17 @@ export default function SettingsForm({ initialSettings, initialFaqs }: SettingsF
           opening_hours: openingHours,
           bank_details_transfer: bankDetailsTransfer,
           payment_api_key: paymentApiKey,
-          payment_secret: paymentSecret,
           hero_title: heroTitle,
           hero_subtitle: heroSubtitle,
           hero_image_url: heroImageUrl,
+          hero_badge_text: heroBadgeText,
+          hero_badge_bg: heroBadgeBg,
+          hero_promo_title: heroPromoTitle,
+          hero_promo_category: heroPromoCategory,
+          hero_promo_price: heroPromoPrice,
+          hero_promo_desc: heroPromoDesc,
+          hero_promo_image: heroPromoImage,
+          product_card_btn_text: productCardBtnText,
           primary_color: primaryColor,
           announcement_bar_bg: announcementBarBg,
           standards_title: standardsTitle,
@@ -324,6 +375,13 @@ export default function SettingsForm({ initialSettings, initialFaqs }: SettingsF
         </div>
 
         <Input
+          label="Product Grid Action Button Label"
+          placeholder="e.g. Create Your Own (Default), Customize, Order Now"
+          value={productCardBtnText}
+          onChange={(e) => setProductCardBtnText(e.target.value)}
+        />
+
+        <Input
           label="Homepage Hero Title"
           placeholder="e.g. Print Your Memories. Create Something Special."
           value={heroTitle}
@@ -378,6 +436,130 @@ export default function SettingsForm({ initialSettings, initialFaqs }: SettingsF
               ) : (
                 <span className="text-[10px] text-gray-text text-center px-2">No Media Selected</span>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Hero 3D Showcase Card Customizer Sub-Block */}
+        <div className="pt-6 border-t border-gray-100 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-xs font-extrabold text-dark uppercase tracking-wider">Featured Hero Card (3D Promo Card)</h4>
+              <p className="text-[11px] text-gray-text">Customize the badge, text, price, category tag, and image of the featured promo card on the homepage hero banner.</p>
+            </div>
+            <span className="text-[10px] bg-primary/10 text-primary font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Live Card Editor</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Card Badge Label Text"
+              placeholder="e.g. BEST SELLER, NEW, 20% OFF, POPULAR, HOT"
+              value={heroBadgeText}
+              onChange={(e) => setHeroBadgeText(e.target.value)}
+            />
+
+            <div>
+              <label className="text-xs font-bold text-dark block mb-1">Card Badge Color</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={heroBadgeBg}
+                  onChange={(e) => setHeroBadgeBg(e.target.value)}
+                  className="w-10 h-10 rounded-lg cursor-pointer border border-gray-border p-0.5"
+                />
+                <Input
+                  value={heroBadgeBg}
+                  onChange={(e) => setHeroBadgeBg(e.target.value)}
+                  placeholder="#ef4444"
+                  className="flex-1"
+                />
+              </div>
+            </div>
+
+            <Input
+              label="Card Product Title"
+              placeholder="e.g. Custom Stickers & Labels"
+              value={heroPromoTitle}
+              onChange={(e) => setHeroPromoTitle(e.target.value)}
+            />
+
+            <Input
+              label="Card Category Label"
+              placeholder="e.g. BUSINESS PRINTING"
+              value={heroPromoCategory}
+              onChange={(e) => setHeroPromoCategory(e.target.value)}
+            />
+
+            <Input
+              label="Card Display Price"
+              placeholder="e.g. Rs. 1,200.00"
+              value={heroPromoPrice}
+              onChange={(e) => setHeroPromoPrice(e.target.value)}
+            />
+
+            <Input
+              label="Card Subtitle / Feature Line"
+              placeholder="e.g. High Quality • Durable • Custom Designed"
+              value={heroPromoDesc}
+              onChange={(e) => setHeroPromoDesc(e.target.value)}
+            />
+          </div>
+
+          {/* Promo Card Image Uploader & Live Preview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end bg-bg-light/40 border border-gray-border p-4 rounded-xl mt-2">
+            <div className="space-y-2">
+              <Input
+                label="Card Display Image URL"
+                placeholder="e.g. /secure_uploads/... or external image link"
+                value={heroPromoImage}
+                onChange={(e) => setHeroPromoImage(e.target.value)}
+              />
+              
+              <div className="flex flex-col gap-1.5 pt-2">
+                <label className="text-[10px] font-bold text-dark uppercase tracking-wider block">Upload Card Image (PNG/JPG/WEBP)</label>
+                <div className="flex items-center gap-3">
+                  <label className="cursor-pointer bg-white border border-gray-border hover:border-primary px-4 py-2 rounded-lg text-xs font-bold text-dark flex items-center gap-1.5 transition-all select-none hover:text-primary">
+                    <UploadCloud size={16} className="text-primary" />
+                    {isUploadingPromoImage ? 'Uploading...' : 'Choose File'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePromoImageUpload}
+                      className="hidden"
+                      disabled={isUploadingPromoImage}
+                    />
+                  </label>
+                  {isUploadingPromoImage && <span className="text-[10px] text-gray-text animate-pulse">Uploading...</span>}
+                  {promoImageUploadError && <span className="text-[10px] text-accent-red font-bold">{promoImageUploadError}</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* Live Card Preview */}
+            <div className="flex justify-center md:justify-end">
+              <div className="w-56 bg-soft-dark border border-gray-800 rounded-xl p-3 shadow-md text-white space-y-2">
+                <div className="w-full h-32 bg-gray-900 rounded-lg overflow-hidden relative border border-gray-800 flex items-center justify-center">
+                  {heroPromoImage ? (
+                    <img src={heroPromoImage} alt="Card Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[10px] text-gray-400">Default Product Image</span>
+                  )}
+                  <div
+                    className="absolute top-1.5 right-1.5 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase shadow-xs tracking-wider"
+                    style={{ backgroundColor: heroBadgeBg }}
+                  >
+                    {heroBadgeText || 'BEST SELLER'}
+                  </div>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-[8px] text-primary font-bold uppercase tracking-wider truncate">{heroPromoCategory || 'BUSINESS PRINTING'}</p>
+                  <h5 className="font-extrabold text-white text-xs truncate">{heroPromoTitle || 'Custom Stickers & Labels'}</h5>
+                  <div className="flex justify-between items-center text-[10px]">
+                    <span className="font-bold text-white">{heroPromoPrice || 'Rs. 1,200.00'}</span>
+                    <span className="text-[8px] text-gray-400 truncate max-w-[80px]">{heroPromoDesc || 'High Quality'}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

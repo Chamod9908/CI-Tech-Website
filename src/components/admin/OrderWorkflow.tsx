@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Textarea from '../ui/Textarea';
-import { ClipboardList, Printer, Save, FileText, Check, AlertCircle, UploadCloud } from 'lucide-react';
+import { ClipboardList, Printer, Save, FileText, Check, AlertCircle, UploadCloud, CheckCircle2, MessageCircle, Copy, Heart } from 'lucide-react';
 
 interface OrderItemOption {
   id: string;
@@ -396,6 +396,59 @@ export default function OrderWorkflow({ order, role, settings }: OrderWorkflowPr
               Save Workflow Changes <Save size={14} />
             </Button>
           </form>
+
+          {/* Order Completed Thank You Banner when status is DELIVERED */}
+          {(status === 'DELIVERED' || order.status === 'DELIVERED') && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-3 text-emerald-950 animate-fade-in shadow-xs mt-4">
+              <div className="flex items-center justify-between text-emerald-800 font-extrabold text-xs uppercase tracking-wider">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                  Order Completed Message
+                </span>
+                <span className="bg-emerald-600 text-white text-[9px] px-2 py-0.5 rounded-full font-bold">DELIVERED</span>
+              </div>
+              
+              <div className="bg-white p-3 rounded-lg border border-emerald-100 space-y-2 text-xs leading-relaxed">
+                <p className="font-black text-emerald-900 tracking-wide uppercase">ORDER COMPLETED!</p>
+                <p className="text-gray-700 font-medium">
+                  Thank you for choosing <strong className="text-dark">C.I. Technologies & Color Lab</strong>.
+                </p>
+                <p className="text-gray-700 font-medium">
+                  Your order (<strong className="text-primary">{order.orderNumber}</strong>) has been successfully completed. We truly appreciate your support and trust in our service.
+                </p>
+                <p className="font-bold text-emerald-800">Thank you for your order! ❤️</p>
+                <p className="text-gray-600 font-medium">We hope to serve you again soon.</p>
+                <p className="font-extrabold text-emerald-900 pt-0.5">
+                  Come again! We look forward to creating something special for you. 😊
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                <a
+                  href={`https://wa.me/${order.customerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                    `ORDER COMPLETED!\n\nThank you for choosing *C.I. Technologies & Color Lab*.\n\nYour order (*${order.orderNumber}*) has been successfully completed. We truly appreciate your support and trust in our service.\n\n*Thank you for your order! ❤️*\nWe hope to serve you again soon.\n\n*Come again! We look forward to creating something special for you. 😊*`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-xs"
+                >
+                  <MessageCircle size={14} /> Send WhatsApp Message
+                </a>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    const msg = `ORDER COMPLETED!\n\nThank you for choosing C.I. Technologies & Color Lab.\n\nYour order (${order.orderNumber}) has been successfully completed. We truly appreciate your support and trust in our service.\n\nThank you for your order! ❤️\nWe hope to serve you again soon.\n\nCome again! We look forward to creating something special for you. 😊`;
+                    navigator.clipboard.writeText(msg);
+                    alert('Completion thank-you message copied to clipboard!');
+                  }}
+                  className="bg-white border border-emerald-300 hover:bg-emerald-100 text-emerald-800 font-bold text-xs py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all"
+                >
+                  <Copy size={14} /> Copy Text
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Audit history list */}

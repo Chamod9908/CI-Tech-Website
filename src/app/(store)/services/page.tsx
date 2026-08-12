@@ -65,7 +65,7 @@ export default async function ServicesPage() {
               <div className="pt-6">
                 <Link href={`/shop?category=${service.slug}`}>
                   <Button variant="outline" size="sm" className="w-full font-bold text-xs gap-1">
-                    Configure Products <ArrowRight size={14} />
+                    Create Your Own <ArrowRight size={14} />
                   </Button>
                 </Link>
               </div>

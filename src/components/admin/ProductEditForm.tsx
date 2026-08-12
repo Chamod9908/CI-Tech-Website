@@ -32,6 +32,7 @@ interface ProductType {
   shortDescription?: string | null;
   price: number;
   costPrice: number;
+  salePrice?: number | null;
   stock: number;
   lowStockThreshold: number;
   imageUrl?: string | null;
@@ -60,6 +61,7 @@ export default function ProductEditForm({ product, categories }: ProductEditForm
   const [shortDescription, setShortDescription] = useState(product.shortDescription || '');
   const [price, setPrice] = useState(String(product.price));
   const [costPrice, setCostPrice] = useState(String(product.costPrice));
+  const [salePrice, setSalePrice] = useState(product.salePrice ? String(product.salePrice) : '');
   const [stock, setStock] = useState(String(product.stock));
   const [lowStockThreshold, setLowStockThreshold] = useState(String(product.lowStockThreshold));
   const [imageUrl, setImageUrl] = useState(product.imageUrl || '');
@@ -162,6 +164,7 @@ export default function ProductEditForm({ product, categories }: ProductEditForm
           shortDescription,
           price,
           costPrice,
+          salePrice,
           stock,
           lowStockThreshold,
           imageUrl: imageUrl || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=600',
@@ -209,7 +212,7 @@ export default function ProductEditForm({ product, categories }: ProductEditForm
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-bold text-dark uppercase tracking-wider block">Category Mapping</label>
             <select
@@ -233,12 +236,19 @@ export default function ProductEditForm({ product, categories }: ProductEditForm
             required
           />
           <Input
-            label="Selling Price (Rs.)"
+            label="Regular Price (Rs.)"
             type="number"
             placeholder="e.g. 1000"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             required
+          />
+          <Input
+            label="Sale Price (Rs.) [Optional]"
+            type="number"
+            placeholder="e.g. 850 (Or blank)"
+            value={salePrice}
+            onChange={(e) => setSalePrice(e.target.value)}
           />
         </div>
 

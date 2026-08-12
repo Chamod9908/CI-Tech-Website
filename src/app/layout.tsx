@@ -53,7 +53,7 @@ export default async function RootLayout({
           }
         `}} />
       </head>
-      <body className="bg-white text-dark min-h-screen flex flex-col font-sans">
+      <body suppressHydrationWarning className="bg-white text-dark min-h-screen flex flex-col font-sans">
         {children}
       </body>
     </html>

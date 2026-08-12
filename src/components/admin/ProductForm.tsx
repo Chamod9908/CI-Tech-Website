@@ -39,6 +39,7 @@ export default function ProductForm({ categories, initialCategoryId }: ProductFo
   const [shortDescription, setShortDescription] = useState('');
   const [price, setPrice] = useState('');
   const [costPrice, setCostPrice] = useState('');
+  const [salePrice, setSalePrice] = useState('');
   const [stock, setStock] = useState('100');
   const [lowStockThreshold, setLowStockThreshold] = useState('5');
   const [imageUrl, setImageUrl] = useState('');
@@ -133,6 +134,7 @@ export default function ProductForm({ categories, initialCategoryId }: ProductFo
           shortDescription,
           price,
           costPrice,
+          salePrice,
           stock,
           lowStockThreshold,
           imageUrl: imageUrl || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=600',
@@ -180,7 +182,7 @@ export default function ProductForm({ categories, initialCategoryId }: ProductFo
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-bold text-dark uppercase tracking-wider block">Category Mapping</label>
             <select
@@ -204,12 +206,19 @@ export default function ProductForm({ categories, initialCategoryId }: ProductFo
             required
           />
           <Input
-            label="Selling Price (Rs.)"
+            label="Regular Price (Rs.)"
             type="number"
             placeholder="e.g. 1000"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             required
+          />
+          <Input
+            label="Sale Price (Rs.) [Optional]"
+            type="number"
+            placeholder="e.g. 850 (Or leave blank)"
+            value={salePrice}
+            onChange={(e) => setSalePrice(e.target.value)}
           />
         </div>
 

@@ -139,11 +139,31 @@ export default async function TrackingPage({ searchParams }: TrackingPageProps) 
             </div>
             <div className="text-right sm:text-left">
               <span className="text-[10px] text-gray-text font-bold uppercase tracking-wider block">Estimated State</span>
-              <span className="inline-block bg-primary/10 text-primary text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider mt-1">
+              <span className={`inline-block text-xs font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider mt-1 ${order.status === 'DELIVERED' ? 'bg-emerald-600 text-white' : 'bg-primary/10 text-primary'}`}>
                 {order.status.replace('_', ' ')}
               </span>
             </div>
           </div>
+
+          {/* Order Completed Thank You Card for Customer */}
+          {order.status === 'DELIVERED' && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-3 shadow-xs animate-fade-in">
+              <div className="inline-flex items-center gap-1.5 bg-emerald-600 text-white font-extrabold text-xs px-3.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                <span>✓ ORDER COMPLETED!</span>
+              </div>
+              <h3 className="text-xl font-extrabold text-emerald-950">Thank you for choosing C.I. Technologies & Color Lab</h3>
+              <p className="text-xs sm:text-sm text-emerald-800 max-w-xl mx-auto leading-relaxed font-medium">
+                Your order has been successfully completed. We truly appreciate your support and trust in our service.
+              </p>
+              <div className="pt-3 border-t border-emerald-200/80 space-y-1">
+                <p className="text-sm font-extrabold text-emerald-900">Thank you for your order! ❤️</p>
+                <p className="text-xs font-semibold text-emerald-750">We hope to serve you again soon.</p>
+                <p className="text-xs font-black text-emerald-950 pt-1">
+                  Come again! We look forward to creating something special for you. 😊
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Graphical Pipeline Timeline */}
           <div className="space-y-4">

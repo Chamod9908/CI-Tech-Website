@@ -2,7 +2,7 @@ import React from 'react';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, ShoppingBag, FolderKanban, ClipboardList, Settings, LogOut, UserCheck } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, FolderKanban, ClipboardList, Settings, LogOut, UserCheck, Users, Tag } from 'lucide-react';
 
 export const revalidate = 0;
 
@@ -11,16 +11,57 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  let session;
+  try {
+    session = await getSession();
+  } catch (e) {
+    console.error('Session fetch error in layout:', e);
+  }
 
   // Route Guard: restrict to staff roles
-  if (!session || session.role === 'CUSTOMER') {
-    redirect('/login');
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-bg-light flex items-center justify-center p-6">
+        <div className="bg-white border border-gray-border rounded-2xl p-8 max-w-md w-full text-center space-y-4 shadow-lg">
+          <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto font-black text-lg">
+            CI
+          </div>
+          <h2 className="text-xl font-extrabold text-dark tracking-tight">Staff Authentication Required</h2>
+          <p className="text-xs text-gray-text leading-relaxed">
+            Please sign in with a Staff or Admin account to access the #colorlab99 management portal.
+          </p>
+          <Link href="/login" className="inline-block bg-primary hover:bg-primary-hover text-white font-bold text-xs px-6 py-3 rounded-xl transition-all shadow-xs">
+            Sign In to Admin Account
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (session.role === 'CUSTOMER') {
+    return (
+      <div className="min-h-screen bg-bg-light flex items-center justify-center p-6">
+        <div className="bg-white border border-gray-border rounded-2xl p-8 max-w-md w-full text-center space-y-4 shadow-lg">
+          <div className="w-12 h-12 rounded-full bg-red-100 text-accent-red flex items-center justify-center mx-auto font-black text-lg">
+            !
+          </div>
+          <h2 className="text-xl font-extrabold text-dark tracking-tight">Access Restricted</h2>
+          <p className="text-xs text-gray-text leading-relaxed">
+            The Admin Management Portal is restricted to studio managers, designers, and staff employees.
+          </p>
+          <Link href="/account" className="inline-block bg-primary hover:bg-primary-hover text-white font-bold text-xs px-6 py-3 rounded-xl transition-all shadow-xs">
+            Go to Your Customer Account
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const staffLinks = [
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { label: 'Orders List', href: '/admin/orders', icon: ClipboardList },
+    { label: 'Customers', href: '/admin/customers', icon: Users },
+    { label: 'Offers & Deals', href: '/admin/offers', icon: Tag },
     { label: 'Products', href: '/admin/products', icon: ShoppingBag },
     { label: 'Categories', href: '/admin/categories', icon: FolderKanban },
     { label: 'Site Settings', href: '/admin/settings', icon: Settings },
@@ -42,11 +83,11 @@ export default async function AdminLayout({
 
           <div className="mb-4 bg-soft-dark border border-gray-800 p-3 rounded-lg flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm shrink-0">
-              {session.name.substring(0, 1)}
+              {(session.name || session.email || 'A').substring(0, 1).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-white truncate leading-none">{session.name}</p>
-              <p className="text-[9px] text-gray-text font-semibold uppercase mt-1 leading-none">{session.role.replace('_', ' ')}</p>
+              <p className="text-xs font-bold text-white truncate leading-none">{session.name || session.email || 'Admin'}</p>
+              <p className="text-[9px] text-gray-text font-semibold uppercase mt-1 leading-none">{session.role ? session.role.replace('_', ' ') : 'STAFF'}</p>
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { StoreProvider } from '@/context/StoreContext';
 import Header from '@/components/storefront/Header';
 import Footer from '@/components/storefront/Footer';
+import FloatingWhatsApp from '@/components/storefront/FloatingWhatsApp';
 import { getSession } from '@/lib/auth';
 import { getAllSiteSettings } from '@/lib/settings';
 
@@ -16,12 +17,13 @@ export default async function StorefrontLayout({
 
   return (
     <StoreProvider>
-      <div className="min-h-screen flex flex-col bg-white">
+      <div className="min-h-screen flex flex-col bg-white relative">
         <Header session={session} announcement={announcement} settings={settings} />
         <main className="flex-1 w-full">
           {children}
         </main>
         <Footer settings={settings} />
+        <FloatingWhatsApp whatsappNumber={settings.contact_whatsapp} />
       </div>
     </StoreProvider>
   );

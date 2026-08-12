@@ -58,6 +58,7 @@ export default async function ProductEditPage({ params }: ProductEditPageProps) 
     shortDescription: product.shortDescription,
     price: Number(product.price),
     costPrice: Number(product.costPrice),
+    salePrice: product.salePrice ? Number(product.salePrice) : null,
     stock: product.stock,
     lowStockThreshold: product.lowStockThreshold,
     imageUrl: product.images[0]?.url || '',
