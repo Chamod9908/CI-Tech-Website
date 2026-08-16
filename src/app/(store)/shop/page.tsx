@@ -17,7 +17,6 @@ interface ShopPageProps {
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
-  const isSuperAdmin = false;
   const settings = siteSettings;
   const productCardBtnText = settings.product_card_btn_text || 'Create Your Own';
   const params = await searchParams;

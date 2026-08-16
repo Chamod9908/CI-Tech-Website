@@ -7,7 +7,6 @@ import { products as staticProducts } from '@/data/products';
 import { siteSettings } from '@/data/settings';
 
 export default function OffersPage() {
-  const isSuperAdmin = false;
   const settings = siteSettings;
   const productCardBtnText = settings.product_card_btn_text || 'Create Your Own';
 

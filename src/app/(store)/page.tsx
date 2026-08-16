@@ -10,7 +10,6 @@ import Button from '@/components/ui/Button';
 
 // Static presentation page
 export default function HomePage() {
-  const isSuperAdmin = false;
   const settings = siteSettings;
   const activeCategories = categories.filter((c) => c.isEnabled);
   const featuredProducts = products.filter((p) => p.isFeatured && p.isActive).slice(0, 8);
@@ -202,7 +201,7 @@ export default function HomePage() {
                       className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
                     />
                     {product.salePrice && (
-                      <span className={`absolute ${isSuperAdmin ? 'top-11' : 'top-2'} left-2 bg-accent-red text-white text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider z-10`}>
+                      <span className="absolute top-2 left-2 bg-accent-red text-white text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider z-10">
                         Promo Sale
                       </span>
                     )}

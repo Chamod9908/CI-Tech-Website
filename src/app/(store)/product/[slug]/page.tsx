@@ -12,7 +12,6 @@ interface ProductPageProps {
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const isSuperAdmin = false;
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
 

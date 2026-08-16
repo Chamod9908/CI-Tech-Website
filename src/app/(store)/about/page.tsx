@@ -1,11 +1,7 @@
 import React from 'react';
 import { Award, Clock, Printer, ShieldCheck } from 'lucide-react';
-import { siteSettings } from '@/data/settings';
 
 export default function AboutPage() {
-  const isSuperAdmin = false;
-  const settings = siteSettings;
-
   const title = 'About C.I. Technologies & Color Lab';
   const content = 'C.I. Technologies & Color Lab is a premium digital printing, photo framing, and color lab service provider based in Sri Lanka. Under our hashtag #colorlab99, we specialize in high-quality photo prints, customized mug prints, canvas blocks, lamination, and promotional corporate items. With islandwide delivery and state-of-the-art print hardware, we ensure your memories are preserved with vivid colors.';
 

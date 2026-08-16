@@ -1,12 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Printer, Scissors, Sparkles, Image as ImageIcon, Award, Heart, Edit } from 'lucide-react';
+import { ArrowRight, Printer, Scissors, Sparkles, Image as ImageIcon, Award, Heart } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { services as staticServices } from '@/data/services';
 
 export default function ServicesPage() {
-  const isSuperAdmin = false;
-
   const iconMap: Record<string, any> = {
     Printer,
     Scissors,
@@ -14,7 +12,6 @@ export default function ServicesPage() {
     ImageIcon,
     Award,
     Heart,
-    Edit,
   };
 
   return (

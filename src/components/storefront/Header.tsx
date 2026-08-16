@@ -13,7 +13,6 @@ interface HeaderProps {
 }
 
 export default function Header({ session, announcement, settings }: HeaderProps) {
-  const isSuperAdmin = false;
   const pathname = usePathname();
   const { cartCount, wishlist } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
