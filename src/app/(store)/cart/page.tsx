@@ -70,7 +70,7 @@ export default function CartPage() {
           {cart.map((item) => (
             <div
               key={item.id}
-              className="bg-white border border-gray-border rounded-xl p-4 sm:p-5 shadow-xs flex gap-4 items-start sm:items-center hover:border-gray-300 transition-colors"
+              className="bg-white border border-gray-border rounded-xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row gap-4 items-start sm:items-center hover:border-gray-300 transition-colors"
             >
               {/* Product preview image */}
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-50 border border-gray-100 rounded-lg overflow-hidden shrink-0">
