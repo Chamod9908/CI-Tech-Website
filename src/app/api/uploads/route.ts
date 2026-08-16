@@ -28,16 +28,13 @@ export async function POST(req: NextRequest) {
     // 3. Generate secure, unique filename
     const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}${ext}`;
     const secureUploadsDir = path.join(process.cwd(), 'secure_uploads');
-    const publicUploadsDir = path.join(process.cwd(), 'public', 'secure_uploads');
 
-    // 4. Ensure directories exist
+    // 4. Ensure directory exists
     await fs.mkdir(secureUploadsDir, { recursive: true });
-    await fs.mkdir(publicUploadsDir, { recursive: true });
 
-    // 5. Save file in both secure_uploads and public/secure_uploads
+    // 5. Save file in secure_uploads
     const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(path.join(secureUploadsDir, filename), buffer);
-    await fs.writeFile(path.join(publicUploadsDir, filename), buffer);
 
     return NextResponse.json({
       success: true,
