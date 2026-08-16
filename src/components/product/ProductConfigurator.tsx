@@ -98,34 +98,21 @@ export default function ProductConfigurator({ product }: ProductConfiguratorProp
     
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const formData = new FormData();
-      formData.append('file', file);
-
       try {
-        const res = await fetch('/api/uploads', {
-          method: 'POST',
-          body: formData,
-        });
+        const objectUrl = URL.createObjectURL(file);
+        const newFile: UploadedFile = {
+          filename: file.name,
+          fileType: file.type || 'image/jpeg',
+          fileSize: file.size,
+          url: objectUrl,
+        };
+        setUploadedFiles((prev) => [...prev, newFile]);
 
-        const data = await res.json();
-        if (res.ok && data.success) {
-          const newFile: UploadedFile = {
-            filename: data.filename,
-            fileType: data.fileType,
-            fileSize: data.fileSize,
-            url: data.url,
-          };
-          setUploadedFiles((prev) => [...prev, newFile]);
-
-          // Immediately display the uploaded image on the product preview!
-          if (data.url && (data.fileType?.includes('image') || file.type.startsWith('image/') || data.url.match(/\.(png|jpg|jpeg|webp|gif|svg)$/i))) {
-            setActiveImage(data.url);
-          }
-        } else {
-          setUploadError(data.error || 'Failed to upload file');
+        if (file.type.startsWith('image/')) {
+          setActiveImage(objectUrl);
         }
       } catch (e) {
-        setUploadError('Network error uploading file');
+        setUploadError('Failed to process image preview.');
       }
     }
     setIsUploading(false);
