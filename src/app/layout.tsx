@@ -16,14 +16,14 @@ export const metadata: Metadata = {
   },
 };
 
-import { getAllSiteSettings } from "@/lib/settings";
+import { siteSettings } from "@/data/settings";
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getAllSiteSettings();
+  const settings = siteSettings;
   const primaryColor = settings.primary_color || '#f97316';
   const announcementBarBg = settings.announcement_bar_bg || '#f97316';
 

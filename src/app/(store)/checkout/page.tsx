@@ -1,26 +1,21 @@
 import React from 'react';
-import { prisma } from '@/lib/db';
-import { getSession } from '@/lib/auth';
-import { getAllSiteSettings } from '@/lib/settings';
+import { siteSettings } from '@/data/settings';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-export const revalidate = 0;
-
-export default async function CheckoutPage() {
-  const session = await getSession();
-  const settings = await getAllSiteSettings();
-  const zones = await prisma.deliveryZone.findMany({
-    where: { isActive: true },
-  });
-
-  // Map to simple JSON representations for passing down cleanly
-  const plainZones = zones.map(z => ({
-    name: z.name,
-    deliveryFee: Number(z.deliveryFee),
-    estimatedDays: z.estimatedDays,
-  }));
+export default function CheckoutPage() {
+  const settings = siteSettings;
+  const plainZones = [
+    { name: 'Colombo', deliveryFee: 350.00, estimatedDays: '1-2 Days' },
+    { name: 'Gampaha', deliveryFee: 400.00, estimatedDays: '2-3 Days' },
+    { name: 'Kalutara', deliveryFee: 450.00, estimatedDays: '2-3 Days' },
+    { name: 'Kandy', deliveryFee: 500.00, estimatedDays: '3-4 Days' },
+    { name: 'Kurunegala', deliveryFee: 500.00, estimatedDays: '3-4 Days' },
+    { name: 'Galle', deliveryFee: 500.00, estimatedDays: '3-4 Days' },
+    { name: 'Matara', deliveryFee: 550.00, estimatedDays: '3-4 Days' },
+    { name: 'Other Districts', deliveryFee: 600.00, estimatedDays: '4-5 Days' },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -42,8 +37,8 @@ export default async function CheckoutPage() {
         </div>
 
         <CheckoutForm
-          session={session}
-          settings={settings}
+          session={null}
+          settings={settings as unknown as Record<string, string>}
           zones={plainZones}
         />
       </div>

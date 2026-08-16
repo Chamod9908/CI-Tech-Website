@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { CheckCircle, MessageCircle, FileText, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { getAllSiteSettings } from '@/lib/settings';
+import { siteSettings } from '@/data/settings';
 
 interface SuccessPageProps {
   searchParams: Promise<{
@@ -13,7 +13,7 @@ interface SuccessPageProps {
 export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const params = await searchParams;
   const orderNumber = params.orderNumber || 'CI-10000';
-  const settings = await getAllSiteSettings();
+  const settings = siteSettings;
   const whatsappNumber = settings.contact_whatsapp || '+94771234567';
 
   // Build WhatsApp template

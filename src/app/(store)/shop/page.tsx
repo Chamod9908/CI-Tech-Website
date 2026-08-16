@@ -1,14 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import { prisma } from '@/lib/db';
-import { Search, SlidersHorizontal, ArrowUpDown, Edit } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { getSession } from '@/lib/auth';
 import ShopSortSelect from '@/components/product/ShopSortSelect';
-import { QuickProductControls, QuickCategoryControls } from '@/components/admin/QuickAdminControls';
-import { getAllSiteSettings } from '@/lib/settings';
-
-export const revalidate = 0;
+import { categories as staticCategories } from '@/data/categories';
+import { products as staticProducts, ProductData } from '@/data/products';
+import { siteSettings } from '@/data/settings';
 
 interface ShopPageProps {
   searchParams: Promise<{
@@ -20,68 +17,48 @@ interface ShopPageProps {
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
-  const session = await getSession();
-  const isSuperAdmin = session?.role === 'SUPER_ADMIN';
-  const settings = await getAllSiteSettings();
+  const isSuperAdmin = false;
+  const settings = siteSettings;
   const productCardBtnText = settings.product_card_btn_text || 'Create Your Own';
   const params = await searchParams;
-  const search = params.search || '';
-  const category = params.category || '';
+  const search = (params.search || '').toLowerCase();
+  const categorySlug = params.category || '';
   const filter = params.filter || '';
   const sort = params.sort || 'newest';
 
-  // 1. Fetch Categories for Filter Bar (Super Admin sees hidden categories too)
-  const categories = await prisma.category.findMany({
-    where: isSuperAdmin ? undefined : { isEnabled: true },
-    orderBy: { orderIndex: 'asc' },
-  });
+  // 1. Categories for Filter Bar
+  const categories = staticCategories.filter((c) => c.isEnabled);
 
-  // 2. Build Prisma Query Filters (Super Admin sees hidden products too)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const whereClause: Record<string, any> = {};
-  if (!isSuperAdmin) {
-    whereClause.isActive = true;
-  }
+  // 2. Filter Products
+  let filteredProducts: ProductData[] = [...staticProducts];
 
   if (search) {
-    whereClause.OR = [
-      { name: { contains: search } },
-      { description: { contains: search } },
-      { sku: { contains: search } },
-    ];
+    filteredProducts = filteredProducts.filter(
+      (p) =>
+        p.name.toLowerCase().includes(search) ||
+        p.description.toLowerCase().includes(search) ||
+        p.sku.toLowerCase().includes(search)
+    );
   }
 
-  if (category) {
-    whereClause.category = { slug: category };
+  if (categorySlug) {
+    filteredProducts = filteredProducts.filter((p) => p.categorySlug === categorySlug);
   }
 
   if (filter === 'sale') {
-    whereClause.OR = [
-      { salePrice: { not: null } },
-      { isFeatured: true },
-    ];
+    filteredProducts = filteredProducts.filter((p) => p.isFeatured);
   }
 
-  // 3. Build Sorting Logic
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let orderByClause: any = { createdAt: 'desc' };
+  // 3. Sorting
   if (sort === 'price-asc') {
-    orderByClause = { price: 'asc' };
+    filteredProducts.sort((a, b) => a.price - b.price);
   } else if (sort === 'price-desc') {
-    orderByClause = { price: 'desc' };
+    filteredProducts.sort((a, b) => b.price - a.price);
   } else if (sort === 'popular') {
-    orderByClause = { isFeatured: 'desc' };
+    filteredProducts.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
   }
 
-  // 4. Query Products
-  const products = await prisma.product.findMany({
-    where: whereClause,
-    orderBy: orderByClause,
-    include: {
-      images: true,
-      category: true,
-    },
-  });
+  const products = filteredProducts;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen">
@@ -109,17 +86,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-xs font-extrabold text-dark uppercase tracking-widest">Categories</h4>
-              {isSuperAdmin && (
-                <Link href="/admin/categories" className="text-primary hover:text-primary-hover flex items-center gap-0.5 text-[10px] font-bold transition-colors" title="Manage Categories (Super Admin)">
-                  <Edit size={12} /> Manage
-                </Link>
-              )}
             </div>
             <div className="flex flex-col space-y-2">
               <Link
                 href="/shop"
                 className={`text-sm font-semibold py-1.5 px-3 rounded-lg transition-colors ${
-                  !category
+                  !categorySlug
                     ? 'bg-primary text-white'
                     : 'text-dark hover:bg-gray-100'
                 }`}
@@ -131,18 +103,13 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                   <Link
                     href={`/shop?category=${cat.slug}&sort=${sort}${search ? `&search=${search}` : ''}`}
                     className={`text-sm font-semibold py-1.5 px-3 rounded-lg transition-colors flex-1 min-w-0 truncate ${
-                      category === cat.slug
+                      categorySlug === cat.slug
                         ? 'bg-primary text-white'
                         : 'text-dark hover:bg-gray-100'
-                    } ${!cat.isEnabled ? 'opacity-55 line-through text-gray-text' : ''}`}
+                    }`}
                   >
                     {cat.name}
                   </Link>
-                  <QuickCategoryControls
-                    categoryId={cat.id}
-                    isEnabled={cat.isEnabled}
-                    isSuperAdmin={isSuperAdmin}
-                  />
                 </div>
               ))}
             </div>
@@ -152,7 +119,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             <h4 className="text-xs font-extrabold text-dark uppercase tracking-widest mb-4">Offers & Filters</h4>
             <div className="flex flex-col space-y-2">
               <Link
-                href={`/shop?${category ? `category=${category}&` : ''}filter=sale&sort=${sort}`}
+                href={`/shop?${categorySlug ? `category=${categorySlug}&` : ''}filter=sale&sort=${sort}`}
                 className={`text-sm font-semibold py-1.5 px-3 rounded-lg transition-colors ${
                   filter === 'sale'
                     ? 'bg-accent-red text-white'
@@ -174,18 +141,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <div className="text-xs text-gray-text font-semibold">
                 Found <span className="text-dark font-bold">{products.length}</span> products
               </div>
-              {isSuperAdmin && (
-                <Link href={(() => {
-                  const currentCatObj = categories.find(c => c.slug === category);
-                  return currentCatObj 
-                    ? `/admin/products/new?categoryId=${currentCatObj.id}`
-                    : '/admin/products/new';
-                })()}>
-                  <span className="cursor-pointer bg-white border border-gray-border hover:border-primary text-dark hover:text-primary text-[10px] font-extrabold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all shadow-2xs">
-                    + Add Product
-                  </span>
-                </Link>
-              )}
             </div>
             
             {/* Sorting Dropdowns */}
@@ -212,45 +167,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 return (
                   <div
                     key={product.id}
-                    className={`bg-white border rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:border-primary/50 transition-all duration-200 flex flex-col justify-between relative ${
-                      !product.isActive ? 'opacity-85 border-dashed border-accent-red/40 bg-accent-red/5' : 'border-gray-border'
-                    }`}
+                    className="bg-white border border-gray-border rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:border-primary/50 transition-all duration-200 flex flex-col justify-between relative"
                   >
-                    {!product.isActive && (
-                      <span className="absolute bottom-2 left-2 bg-accent-red text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-md uppercase z-20 shadow-xs select-none">
-                        Hidden
-                      </span>
-                    )}
-
-                    <QuickProductControls
-                      productId={product.id}
-                      isActive={product.isActive}
-                      isSuperAdmin={isSuperAdmin}
-                      productName={product.name}
-                      currentPrice={Number(product.price)}
-                      currentSalePrice={product.salePrice ? Number(product.salePrice) : null}
-                    />
-
-                    {isSuperAdmin && (
-                      <Link
-                        href={`/admin/products/${product.id}`}
-                        className="absolute top-2 left-2 z-20 bg-white border border-gray-border text-dark rounded-full p-1.5 shadow-sm hover:text-primary transition-all inline-flex items-center justify-center cursor-pointer"
-                        title="Edit Product (Super Admin)"
-                      >
-                        <Edit size={12} />
-                      </Link>
-                    )}
                     <Link href={`/product/${product.slug}`} className="block relative w-full h-44 bg-gray-100 overflow-hidden border-b border-gray-border">
                       <img
                         src={defaultImage}
                         alt={product.name}
                         className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
                       />
-                      {product.salePrice && (
-                        <span className={`absolute ${isSuperAdmin ? 'top-11' : 'top-2'} left-2 bg-accent-red text-white text-[9px] font-bold px-2 py-0.5 rounded-md uppercase z-10`}>
-                          Sale
-                        </span>
-                      )}
                       <span className="absolute top-2 right-2 bg-white/95 text-[9px] text-dark font-extrabold px-2 py-0.5 rounded-md border border-gray-100 shadow-sm">
                         CUSTOM
                       </span>
@@ -258,7 +182,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                     <div className="p-4 flex-1 flex flex-col justify-between">
                       <div className="space-y-1">
                         <span className="text-[10px] text-primary uppercase font-bold tracking-widest">
-                          {product.category.name}
+                          {product.categoryName || 'Product'}
                         </span>
                         <h3 className="font-extrabold text-sm text-dark hover:text-primary transition-colors line-clamp-1">
                           <Link href={`/product/${product.slug}`}>{product.name}</Link>
@@ -269,14 +193,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                       </div>
                       <div className="pt-4 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                         <div className="flex flex-col">
-                          {product.salePrice ? (
-                            <>
-                              <span className="text-[10px] line-through text-gray-text">Rs. {Number(product.price).toLocaleString('en-LK', { minimumFractionDigits: 2 })}</span>
-                              <span className="text-sm font-black text-accent-red">Rs. {Number(product.salePrice).toLocaleString('en-LK', { minimumFractionDigits: 2 })}</span>
-                            </>
-                          ) : (
-                            <span className="text-sm font-black text-dark">Rs. {Number(product.price).toLocaleString('en-LK', { minimumFractionDigits: 2 })}</span>
-                          )}
+                          <span className="text-sm font-black text-dark">Rs. {Number(product.price).toLocaleString('en-LK', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <Link href={`/product/${product.slug}`} className="shrink-0">
                           <Button variant="primary" size="sm" className="w-full sm:w-auto px-3 py-1.5 rounded-md text-xs font-bold">
@@ -290,7 +207,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               })}
             </div>
           )}
-
         </div>
       </div>
     </div>

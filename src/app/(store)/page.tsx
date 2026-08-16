@@ -1,35 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { prisma } from '@/lib/db';
-import { getAllSiteSettings } from '@/lib/settings';
-import { ArrowRight, Printer, ShieldCheck, Heart, Clock, MessageCircle, MapPin, Phone, Mail, Award, CheckCircle, Edit } from 'lucide-react';
+import { categories } from '@/data/categories';
+import { products } from '@/data/products';
+import { siteSettings } from '@/data/settings';
+import { faqs } from '@/data/faqs';
+import { ArrowRight, Printer, ShieldCheck, Heart, Clock, MessageCircle, MapPin, Phone, Mail, Award, CheckCircle } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { getSession } from '@/lib/auth';
 
-// Force dynamic to fetch latest values
-export const revalidate = 0;
-
-export default async function HomePage() {
-  const session = await getSession();
-  const isSuperAdmin = session?.role === 'SUPER_ADMIN';
-  const settings = await getAllSiteSettings();
-  const categories = await prisma.category.findMany({
-    where: { isEnabled: true },
-    orderBy: { orderIndex: 'asc' },
-  });
-
-  const featuredProducts = await prisma.product.findMany({
-    where: { isActive: true, isFeatured: true },
-    include: { images: true, category: true },
-    take: 8,
-  });
-
-  const faqs = await prisma.faq.findMany({
-    where: { isEnabled: true },
-    orderBy: { orderIndex: 'asc' },
-    take: 4,
-  });
+// Static presentation page
+export default function HomePage() {
+  const isSuperAdmin = false;
+  const settings = siteSettings;
+  const activeCategories = categories.filter((c) => c.isEnabled);
+  const featuredProducts = products.filter((p) => p.isFeatured && p.isActive).slice(0, 8);
+  const activeFaqs = faqs.filter((f) => f.isEnabled).slice(0, 4);
 
   const whatsappNumber = settings.contact_whatsapp || '+94771234567';
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hi,%20I'm%20interested%20in%20custom%20printing%20services!`;
@@ -42,7 +27,7 @@ export default async function HomePage() {
   const heroBadgeText = settings.hero_badge_text || "Best Seller";
   const heroBadgeBg = settings.hero_badge_bg || "#ef4444";
   const heroPromoTitle = settings.hero_promo_title || (featuredProducts[0]?.name || "Custom Stickers & Labels");
-  const heroPromoCategory = settings.hero_promo_category || (featuredProducts[0]?.category?.name || "Business Printing");
+  const heroPromoCategory = settings.hero_promo_category || (featuredProducts[0]?.categoryName || "Business Printing");
   const heroPromoPrice = settings.hero_promo_price || (featuredProducts[0] ? `Rs. ${Number(featuredProducts[0].price).toLocaleString('en-LK', { minimumFractionDigits: 2 })}` : "Rs. 1,200.00");
   const heroPromoImage = settings.hero_promo_image || (featuredProducts[0]?.images[0]?.url || "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=400");
   const heroPromoDesc = settings.hero_promo_desc || (featuredProducts[0]?.shortDescription || "High Quality • Durable");
@@ -58,15 +43,6 @@ export default async function HomePage() {
     <div className="flex flex-col w-full pb-12">
       {/* 1. Hero Section */}
       <section className="relative bg-dark text-white overflow-hidden py-20 lg:py-32 animate-fade-in">
-        {isSuperAdmin && (
-          <div className="absolute top-4 right-4 z-20">
-            <Link href="/admin/settings">
-              <Button size="sm" variant="primary" className="text-xs font-bold gap-1 shadow-md opacity-90 hover:opacity-100 py-1.5 px-3">
-                <Edit size={14} /> Edit Banner & Colors
-              </Button>
-            </Link>
-          </div>
-        )}
         {heroImageUrl ? (
           heroImageUrl.endsWith('.mp4') || heroImageUrl.endsWith('.webm') ? (
             <video src={heroImageUrl} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-25 pointer-events-none" />
@@ -191,15 +167,6 @@ export default async function HomePage() {
                   {cat.description || 'Customizable layout items.'}
                 </p>
               </Link>
-              {isSuperAdmin && (
-                <Link
-                  href="/admin/categories"
-                  className="absolute top-2 right-2 z-10 bg-white/95 hover:bg-white border border-gray-border text-dark rounded-full p-1 shadow-xs transition-all inline-flex items-center justify-center"
-                  title="Edit Category (Super Admin)"
-                >
-                  <Edit size={10} />
-                </Link>
-              )}
             </div>
           ))}
         </div>
@@ -228,15 +195,6 @@ export default async function HomePage() {
                   key={product.id}
                   className="bg-white border border-gray-border rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:border-primary/50 transition-all duration-200 flex flex-col relative animate-fade-in"
                 >
-                  {isSuperAdmin && (
-                    <Link
-                      href={`/admin/products/${product.id}`}
-                      className="absolute top-2 left-2 z-20 bg-white border border-gray-border text-dark rounded-full p-1.5 shadow-sm hover:text-primary transition-all inline-flex items-center justify-center"
-                      title="Edit Product (Super Admin)"
-                    >
-                      <Edit size={12} />
-                    </Link>
-                  )}
                   <Link href={`/product/${product.slug}`} className="block relative w-full h-48 bg-gray-100 overflow-hidden border-b border-gray-border">
                     <img
                       src={defaultImage}
@@ -326,15 +284,6 @@ export default async function HomePage() {
 
       {/* 5. Why Choose Us Section */}
       <section className="bg-dark text-white py-16 relative">
-        {isSuperAdmin && (
-          <div className="absolute top-4 right-4 z-20">
-            <Link href="/admin/settings">
-              <Button size="sm" variant="primary" className="text-xs font-bold gap-1 shadow-md opacity-90 hover:opacity-100 py-1.5 px-3">
-                <Edit size={14} /> Edit Standards
-              </Button>
-            </Link>
-          </div>
-        )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight border-l-4 border-primary pl-3">
@@ -370,15 +319,6 @@ export default async function HomePage() {
 
       {/* 6. FAQ Accordion Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-16 w-full relative">
-        {isSuperAdmin && (
-          <div className="absolute top-4 right-4 z-20">
-            <Link href="/admin/settings">
-              <Button size="sm" variant="primary" className="text-xs font-bold gap-1 shadow-md opacity-90 hover:opacity-100 py-1.5 px-3">
-                <Edit size={14} /> Edit FAQs
-              </Button>
-            </Link>
-          </div>
-        )}
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-dark tracking-tight">Frequently Asked Questions</h2>
           <p className="text-xs sm:text-sm text-gray-text mt-2">

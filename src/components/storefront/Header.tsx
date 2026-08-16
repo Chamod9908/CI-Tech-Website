@@ -3,18 +3,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Heart, User, ShoppingBag, Menu, X, ChevronDown, LogOut, Edit } from 'lucide-react';
+import { Search, Heart, ShoppingBag, Menu, X } from 'lucide-react';
 import { useStore } from '@/context/StoreContext';
-import { SessionPayload } from '@/lib/auth';
 
 interface HeaderProps {
-  session: SessionPayload | null;
+  session?: any;
   announcement: string;
   settings: Record<string, string>;
 }
 
 export default function Header({ session, announcement, settings }: HeaderProps) {
-  const isSuperAdmin = session?.role === 'SUPER_ADMIN';
+  const isSuperAdmin = false;
   const pathname = usePathname();
   const { cartCount, wishlist } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,7 +21,6 @@ export default function Header({ session, announcement, settings }: HeaderProps)
   const hashtag = settings.brand_hashtag || '#colorlab99';
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
 
 
   const navLinks = [
@@ -47,11 +45,6 @@ export default function Header({ session, announcement, settings }: HeaderProps)
       {announcement && (
         <div className="w-full text-white text-xs font-semibold py-2 px-4 text-center tracking-wide flex items-center justify-center gap-2" style={{ backgroundColor: 'var(--color-announcement)' }}>
           <span>{announcement}</span>
-          {isSuperAdmin && (
-            <Link href="/admin/settings" className="bg-white/20 hover:bg-white/30 text-white rounded p-0.5 transition-all inline-flex items-center justify-center shrink-0" title="Edit Announcement Bar (Super Admin)">
-              <Edit size={10} />
-            </Link>
-          )}
         </div>
       )}
 
@@ -90,11 +83,6 @@ export default function Header({ session, announcement, settings }: HeaderProps)
               </span>
             </div>
           </Link>
-          {isSuperAdmin && (
-            <Link href="/admin/settings" className="text-gray-text hover:text-primary transition-all p-1 inline-flex items-center justify-center shrink-0" title="Edit Branding Settings (Super Admin)">
-              <Edit size={12} />
-            </Link>
-          )}
         </div>
 
         {/* Desktop Navigation Links */}
@@ -183,76 +171,6 @@ export default function Header({ session, announcement, settings }: HeaderProps)
               </span>
             )}
           </Link>
-
-          {/* Account Icon / Dropdown */}
-          <div className="relative">
-            {session ? (
-              <div className="flex items-center">
-                <button
-                  onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                  className="flex items-center gap-1 text-sm font-semibold text-dark hover:text-primary transition-colors focus:outline-none p-1"
-                >
-                  <User size={20} className="text-primary" />
-                  <span className="hidden lg:inline max-w-28 truncate">{session.name}</span>
-                  <ChevronDown size={14} />
-                </button>
-
-                {accountDropdownOpen && (
-                  <div className="absolute right-0 top-10 w-48 bg-white border border-gray-border rounded-lg shadow-lg py-2">
-                    <div className="px-4 py-2 border-b border-gray-border">
-                      <p className="text-xs text-gray-text font-semibold">Logged in as</p>
-                      <p className="text-sm font-bold text-dark truncate">{session.name}</p>
-                    </div>
-                    {session.role !== 'CUSTOMER' && (
-                      <Link
-                        href="/admin"
-                        className="block px-4 py-2 text-sm text-dark hover:bg-gray-100 font-semibold"
-                        onClick={() => setAccountDropdownOpen(false)}
-                      >
-                        Admin Dashboard
-                      </Link>
-                    )}
-                    <Link
-                      href="/account"
-                      className="block px-4 py-2 text-sm text-dark hover:bg-gray-100 font-semibold"
-                      onClick={() => setAccountDropdownOpen(false)}
-                    >
-                      My Profile
-                    </Link>
-                    <Link
-                      href="/account/orders"
-                      className="block px-4 py-2 text-sm text-dark hover:bg-gray-100 font-semibold"
-                      onClick={() => setAccountDropdownOpen(false)}
-                    >
-                      My Orders
-                    </Link>
-                    <button
-                      onClick={async () => {
-                        setAccountDropdownOpen(false);
-                        const res = await fetch('/api/auth/logout', { method: 'POST' });
-                        if (res.ok) {
-                          window.location.href = '/login';
-                        }
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm text-accent-red hover:bg-gray-100 font-semibold flex items-center gap-2"
-                    >
-                      <LogOut size={16} />
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="text-dark hover:text-primary p-2 rounded-full hover:bg-gray-100 transition-all flex items-center gap-1 font-semibold text-sm"
-                aria-label="Login"
-              >
-                <User size={20} />
-                <span className="hidden sm:inline">Login</span>
-              </Link>
-            )}
-          </div>
 
         </div>
       </div>

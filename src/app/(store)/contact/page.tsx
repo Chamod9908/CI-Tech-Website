@@ -1,18 +1,12 @@
 import React from 'react';
-import { getAllSiteSettings } from '@/lib/settings';
-import { MapPin, Phone, Mail, Clock, MessageSquare, Send, Edit } from 'lucide-react';
+import { siteSettings } from '@/data/settings';
+import { MapPin, Phone, Mail, Clock, MessageSquare, Send } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
-import { getSession } from '@/lib/auth';
-import Link from 'next/link';
 
-export const revalidate = 0;
-
-export default async function ContactPage() {
-  const session = await getSession();
-  const isSuperAdmin = session?.role === 'SUPER_ADMIN';
-  const settings = await getAllSiteSettings();
+export default function ContactPage() {
+  const settings = siteSettings;
   const address = settings.store_address || '99 Main Street, Colombo, Sri Lanka';
   const phone = settings.contact_phone || '+94 77 123 4567';
   const email = settings.contact_email || 'info@colorlab99.lk';
@@ -25,15 +19,6 @@ export default async function ContactPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen relative">
-      {isSuperAdmin && (
-        <div className="absolute top-2 right-4 z-20">
-          <Link href="/admin/settings">
-            <span className="cursor-pointer bg-white border border-gray-border hover:border-primary text-dark hover:text-primary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-xs">
-              <Edit size={14} className="text-primary" /> Edit Contact Settings
-            </span>
-          </Link>
-        </div>
-      )}
       <div className="text-center max-w-xl mx-auto mb-12">
         <h1 className="text-4xl font-extrabold text-dark tracking-tight">Get in Touch</h1>
         <p className="text-xs sm:text-sm text-gray-text mt-1.5">

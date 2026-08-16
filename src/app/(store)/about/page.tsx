@@ -1,39 +1,25 @@
 import React from 'react';
-import { prisma } from '@/lib/db';
-import { Award, Clock, Printer, ShieldCheck, Edit } from 'lucide-react';
-import { getSession } from '@/lib/auth';
-import Link from 'next/link';
+import { Award, Clock, Printer, ShieldCheck } from 'lucide-react';
+import { siteSettings } from '@/data/settings';
 
-export const revalidate = 0;
+export default function AboutPage() {
+  const isSuperAdmin = false;
+  const settings = siteSettings;
 
-export default async function AboutPage() {
-  const session = await getSession();
-  const isSuperAdmin = session?.role === 'SUPER_ADMIN';
-
-  const page = await prisma.page.findUnique({
-    where: { slug: 'about-us' },
-  });
+  const title = 'About C.I. Technologies & Color Lab';
+  const content = 'C.I. Technologies & Color Lab is a premium digital printing, photo framing, and color lab service provider based in Sri Lanka. Under our hashtag #colorlab99, we specialize in high-quality photo prints, customized mug prints, canvas blocks, lamination, and promotional corporate items. With islandwide delivery and state-of-the-art print hardware, we ensure your memories are preserved with vivid colors.';
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-10 min-h-screen relative">
-      {isSuperAdmin && (
-        <div className="absolute top-2 right-4 z-20">
-          <Link href="/admin/settings">
-            <span className="cursor-pointer bg-white border border-gray-border hover:border-primary text-dark hover:text-primary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-xs">
-              <Edit size={14} className="text-primary" /> Edit Page Settings
-            </span>
-          </Link>
-        </div>
-      )}
 
       <div className="text-center space-y-2">
-        <h1 className="text-4xl font-extrabold text-dark tracking-tight">{page?.title || 'About Our Studio'}</h1>
+        <h1 className="text-4xl font-extrabold text-dark tracking-tight">{title}</h1>
         <p className="text-xs sm:text-sm text-primary uppercase font-bold tracking-widest">Preserving Memories, Digitally & Physically</p>
       </div>
 
       <div className="bg-white border border-gray-border rounded-2xl p-6 sm:p-6 shadow-xs leading-relaxed space-y-6">
         <p className="text-sm text-dark font-medium whitespace-pre-line">
-          {page?.content || 'C.I. Technologies & Color Lab is a premier print studio and custom framing provider in Sri Lanka.'}
+          {content}
         </p>
       </div>
 

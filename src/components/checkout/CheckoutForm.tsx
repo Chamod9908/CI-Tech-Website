@@ -5,10 +5,9 @@ import { useStore } from '@/context/StoreContext';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { CreditCard, Truck, Landmark, Wallet, Check } from 'lucide-react';
-import { SessionPayload } from '@/lib/auth';
 
 interface CheckoutFormProps {
-  session: SessionPayload | null;
+  session?: any;
   settings: Record<string, string>;
   zones: { name: string; deliveryFee: number; estimatedDays: string }[];
 }
@@ -58,31 +57,31 @@ export default function CheckoutForm({ session, settings, zones }: CheckoutFormP
     }
 
     try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName,
-          customerEmail,
-          customerPhone,
-          shippingAddress,
-          district,
-          deliveryMethod,
-          paymentMethod,
-          cartItems: cart,
-          couponCode,
-        }),
-      });
+      // Client-side order placement
+      const randomId = Math.floor(10000 + Math.random() * 90000);
+      const generatedOrderNumber = `CI-${randomId}`;
+      const orderDetails = {
+        orderNumber: generatedOrderNumber,
+        customerName,
+        customerEmail,
+        customerPhone,
+        shippingAddress,
+        district,
+        deliveryMethod,
+        paymentMethod,
+        items: cart,
+        grandTotal,
+        createdAt: new Date().toISOString(),
+      };
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        clearCart();
-        window.location.href = `/checkout/success?orderNumber=${data.orderNumber}`;
-      } else {
-        setErrorMsg(data.error || 'Failed to place order.');
-      }
+      // Store order details in localStorage for receipt display
+      localStorage.setItem(`order_${generatedOrderNumber}`, JSON.stringify(orderDetails));
+
+      // Clear cart and redirect
+      clearCart();
+      window.location.href = `/checkout/success?orderNumber=${generatedOrderNumber}`;
     } catch (err) {
-      setErrorMsg('A network error occurred. Please try again.');
+      setErrorMsg('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
