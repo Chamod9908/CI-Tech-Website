@@ -84,12 +84,12 @@ export async function PATCH(
       });
 
       if (options && options.length > 0) {
-        for (const opt of options as { name: string; values: { value: string; priceAdjustment: number }[] }[]) {
+        for (const opt of options as { name: string; isRequired?: boolean; values: { value: string; priceAdjustment: number }[] }[]) {
           await tx.productOption.create({
             data: {
               productId: id,
               name: opt.name,
-              isRequired: true,
+              isRequired: opt.isRequired !== undefined ? opt.isRequired : true,
               values: {
                 create: opt.values.map((v) => ({
                   value: v.value,
@@ -102,6 +102,9 @@ export async function PATCH(
       }
 
       return product;
+    }, {
+      maxWait: 15000,
+      timeout: 30000,
     });
 
     return NextResponse.json({ success: true, product: updatedProduct });
@@ -170,6 +173,9 @@ export async function DELETE(
       await tx.product.delete({
         where: { id }
       });
+    }, {
+      maxWait: 15000,
+      timeout: 30000,
     });
 
     return NextResponse.json({ success: true });

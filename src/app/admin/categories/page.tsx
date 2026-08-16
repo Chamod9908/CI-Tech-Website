@@ -71,10 +71,10 @@ export default async function AdminCategoriesPage() {
                         <img 
                           src={c.imageUrl} 
                           alt={c.name} 
-                          className="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" 
+                          className="w-8 h-8 rounded-lg object-cover border border-gray-200 shrink-0" 
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-gray-100 font-black text-[10px] shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center border border-gray-100 font-black text-[10px] shrink-0">
                           {c.name.substring(0, 2).toUpperCase()}
                         </div>
                       )}

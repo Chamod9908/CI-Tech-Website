@@ -52,6 +52,9 @@ export async function PATCH(
       }
 
       return order;
+    }, {
+      maxWait: 15000,
+      timeout: 30000,
     });
 
     return NextResponse.json({ success: true, order: updatedOrder });

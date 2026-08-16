@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { hashPassword, createSession } from '@/lib/auth';
 import { Role } from '@prisma/client';
+import { logAudit } from '@/lib/audit';
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,6 +47,9 @@ export async function POST(req: NextRequest) {
       });
 
       return { user, customer };
+    }, {
+      maxWait: 15000,
+      timeout: 30000,
     });
 
     // 4. Create cookie session
@@ -54,6 +58,14 @@ export async function POST(req: NextRequest) {
       email: result.user.email,
       name: result.user.name,
       role: result.user.role,
+    });
+
+    // 5. Log registration in AuditLog with client IP
+    await logAudit({
+      userId: result.user.id,
+      action: 'USER_REGISTER',
+      details: `New account created for ${result.user.name} (${result.user.email})`,
+      req,
     });
 
     return NextResponse.json({

@@ -45,11 +45,14 @@ export default function RegisterPage() {
         {/* Header Block */}
         <div className="text-center">
           <Link href="/" className="inline-flex flex-col items-center">
-            <span className="font-extrabold text-2xl tracking-tight text-dark">
-              <span className="text-primary font-black">C.I.</span> Technologies
+            <span className="font-extrabold text-2xl tracking-tight text-dark flex items-center gap-1">
+              <span className="text-primary font-black">C.I.</span>
+              <span>Technologies &amp;</span>
+              <span className="text-primary font-black">Color</span>
+              <span className="text-red-600 font-black">Lab</span>
             </span>
-            <span className="text-[10px] text-gray-text font-bold tracking-widest uppercase mt-1">
-              COLOR LAB & STUDIO
+            <span className="text-[10px] text-primary font-extrabold tracking-widest uppercase mt-1">
+              #colorlab99 <span className="text-gray-400 font-normal lowercase tracking-normal">| Experience The Excellence</span>
             </span>
           </Link>
           <h2 className="mt-6 text-xl font-extrabold text-dark tracking-tight">Create Customer Account</h2>

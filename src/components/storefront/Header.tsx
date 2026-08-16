@@ -77,18 +77,16 @@ export default function Header({ session, announcement, settings }: HeaderProps)
                 className="h-10 w-auto object-contain shrink-0"
               />
             )}
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start select-none">
               <span className="font-extrabold text-sm sm:text-base tracking-tight text-dark flex items-center gap-1">
-                {brandName.startsWith('C.I. ') ? (
-                  <>
-                    <span className="text-primary font-black">C.I.</span> {brandName.substring(5)}
-                  </>
-                ) : (
-                  brandName
-                )}
+                <span className="text-primary font-black">C.I.</span>
+                <span>Technologies &amp;</span>
+                <span className="text-primary font-black">Color</span>
+                <span className="text-red-600 font-black">Lab</span>
               </span>
-              <span className="text-[10px] text-primary font-extrabold tracking-widest leading-none mt-1">
-                {hashtag}
+              <span className="text-[10px] text-primary font-extrabold tracking-widest leading-none mt-0.5 flex items-center gap-1.5">
+                <span>{hashtag}</span>
+                <span className="text-dark font-medium opacity-60 text-[9px] tracking-normal border-l border-gray-300 pl-1.5">Experience The Excellence</span>
               </span>
             </div>
           </Link>

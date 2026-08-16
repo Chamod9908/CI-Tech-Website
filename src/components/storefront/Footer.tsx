@@ -64,9 +64,15 @@ export default function Footer({ settings }: FooterProps) {
         
         {/* Brand details */}
         <div className="space-y-4">
-          <h3 className="text-lg font-black tracking-tight text-white">
-            <span className="text-primary">C.I.</span> Technologies
+          <h3 className="text-lg font-black tracking-tight text-white flex items-center gap-1">
+            <span className="text-primary font-black">C.I.</span>
+            <span className="text-white">Technologies &amp;</span>
+            <span className="text-primary font-black">Color</span>
+            <span className="text-red-500 font-black">Lab</span>
           </h3>
+          <p className="text-[11px] text-primary font-extrabold tracking-widest uppercase">
+            #colorlab99 <span className="text-gray-400 font-normal lowercase tracking-normal">| Experience The Excellence</span>
+          </p>
           <p className="text-xs text-gray-text leading-relaxed">
             Professional photo printing, studio lab services, customized mugs, canvas prints, and business branding. Preserving your memories with precision.
           </p>

@@ -48,11 +48,14 @@ export default function LoginPage() {
         {/* Header Block */}
         <div className="text-center">
           <Link href="/" className="inline-flex flex-col items-center">
-            <span className="font-extrabold text-2xl tracking-tight text-dark">
-              <span className="text-primary font-black">C.I.</span> Technologies
+            <span className="font-extrabold text-2xl tracking-tight text-dark flex items-center gap-1">
+              <span className="text-primary font-black">C.I.</span>
+              <span>Technologies &amp;</span>
+              <span className="text-primary font-black">Color</span>
+              <span className="text-red-600 font-black">Lab</span>
             </span>
-            <span className="text-[10px] text-gray-text font-bold tracking-widest uppercase mt-1">
-              COLOR LAB & STUDIO
+            <span className="text-[10px] text-primary font-extrabold tracking-widest uppercase mt-1">
+              #colorlab99 <span className="text-gray-400 font-normal lowercase tracking-normal">| Experience The Excellence</span>
             </span>
           </Link>
           <h2 className="mt-6 text-xl font-extrabold text-dark tracking-tight">Sign In to Your Account</h2>
@@ -95,6 +98,46 @@ export default function LoginPage() {
             </Button>
           </div>
         </form>
+
+        {/* Quick Demo Login Preset Buttons */}
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2">
+          <p className="text-[11px] font-extrabold text-dark uppercase tracking-wider text-center">Quick Demo Login Accounts:</p>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('superadmin@colorlab.lk');
+                setPassword('SuperAdmin#2026!');
+              }}
+              className="px-2.5 py-2 bg-white border border-gray-300 rounded-lg hover:border-purple-600 font-bold text-dark text-left transition-all shadow-xs"
+            >
+              <div className="text-[9px] text-purple-600 font-black uppercase">Super Admin</div>
+              <div className="truncate text-gray-600 font-medium text-[10px]">superadmin@colorlab.lk</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('admin@colorlab.lk');
+                setPassword('ColorLabAdmin#2026!');
+              }}
+              className="px-2.5 py-2 bg-white border border-gray-300 rounded-lg hover:border-primary font-bold text-dark text-left transition-all shadow-xs"
+            >
+              <div className="text-[9px] text-primary font-black uppercase">Admin</div>
+              <div className="truncate text-gray-600 font-medium text-[10px]">admin@colorlab.lk</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('customer@gmail.com');
+                setPassword('ColorLabCustomer#2026!');
+              }}
+              className="px-2.5 py-2 bg-white border border-gray-300 rounded-lg hover:border-green-600 font-bold text-dark text-left transition-all shadow-xs"
+            >
+              <div className="text-[9px] text-green-600 font-black uppercase">Customer</div>
+              <div className="truncate text-gray-600 font-medium text-[10px]">customer@gmail.com</div>
+            </button>
+          </div>
+        </div>
 
         {/* Footer actions */}
         <div className="text-center pt-2">

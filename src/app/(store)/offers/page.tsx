@@ -63,29 +63,24 @@ export default async function OffersPage() {
     },
   ];
 
-  let bundles: BundleDeal[] = defaultBundles;
+  let bundles: BundleDeal[] = [];
   if (settings.offers_bundles_json) {
     try {
       bundles = JSON.parse(settings.offers_bundles_json);
     } catch {
-      bundles = defaultBundles;
+      bundles = [];
     }
   }
 
   // Filter out hidden bundles for standard customer view
   const visibleBundles = isSuperAdmin ? bundles : bundles.filter((b) => !b.isHidden);
 
-  // Query products on sale or featured promotional deals
+  // Query ONLY products that are explicitly on sale (have a salePrice set by admin)
   const products = await prisma.product.findMany({
-    where: isSuperAdmin
-      ? undefined
-      : {
-          isActive: true,
-          OR: [
-            { salePrice: { not: null } },
-            { isFeatured: true },
-          ],
-        },
+    where: {
+      isActive: true,
+      salePrice: { not: null },
+    },
     include: {
       images: true,
       category: true,
@@ -291,7 +286,7 @@ export default async function OffersPage() {
             {products.map((product: any) => {
               const displayImage = product.images[0]?.url || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=400';
               const originalPrice = Number(product.price);
-              const salePrice = product.salePrice ? Number(product.salePrice) : Math.round(originalPrice * 0.85);
+              const salePrice = product.salePrice ? Number(product.salePrice) : originalPrice;
 
               return (
                 <div

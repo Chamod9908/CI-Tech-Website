@@ -177,7 +177,7 @@ export default async function HomePage() {
                 href={`/shop?category=${cat.slug}`}
                 className="block bg-white border border-gray-border rounded-xl p-4 text-center hover:border-primary hover:shadow-md transition-all duration-200 h-full"
               >
-                <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center mx-auto group-hover:scale-110 transition-transform bg-primary/10 border border-gray-100">
+                <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center mx-auto group-hover:scale-110 transition-transform bg-primary/10 border border-gray-100">
                   {cat.imageUrl ? (
                     <img src={cat.imageUrl} alt={cat.name} className="w-full h-full object-cover" />
                   ) : (

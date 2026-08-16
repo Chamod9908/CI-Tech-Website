@@ -52,9 +52,9 @@ export async function POST(req: NextRequest) {
           create: imageUrl ? [{ url: imageUrl, orderIndex: 0 }] : [],
         },
         options: {
-          create: (options as { name: string; values: { value: string; priceAdjustment: number }[] }[] || []).map((opt) => ({
+          create: (options as { name: string; isRequired?: boolean; values: { value: string; priceAdjustment: number }[] }[] || []).map((opt) => ({
             name: opt.name,
-            isRequired: true,
+            isRequired: opt.isRequired !== undefined ? opt.isRequired : true,
             values: {
               create: (opt.values || []).map((val) => ({
                 value: val.value,

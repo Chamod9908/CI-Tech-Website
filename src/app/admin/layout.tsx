@@ -2,7 +2,7 @@ import React from 'react';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, ShoppingBag, FolderKanban, ClipboardList, Settings, LogOut, UserCheck, Users, Tag } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, FolderKanban, ClipboardList, Settings, LogOut, UserCheck, Users, Tag, ShieldCheck } from 'lucide-react';
 
 export const revalidate = 0;
 
@@ -64,6 +64,7 @@ export default async function AdminLayout({
     { label: 'Offers & Deals', href: '/admin/offers', icon: Tag },
     { label: 'Products', href: '/admin/products', icon: ShoppingBag },
     { label: 'Categories', href: '/admin/categories', icon: FolderKanban },
+    { label: 'Audit Logs', href: '/admin/logs', icon: ShieldCheck },
     { label: 'Site Settings', href: '/admin/settings', icon: Settings },
   ];
 
@@ -73,11 +74,14 @@ export default async function AdminLayout({
       <aside className="w-full md:w-64 bg-dark text-white shrink-0 flex flex-col justify-between border-r border-gray-800">
         <div className="p-6">
           <div className="flex flex-col mb-8">
-            <span className="font-extrabold text-xl tracking-tight text-white">
-              <span className="text-primary font-black">C.I.</span> Tech Admin
+            <span className="font-extrabold text-lg tracking-tight text-white flex items-center gap-1">
+              <span className="text-primary font-black">C.I.</span>
+              <span className="text-white">Tech &amp;</span>
+              <span className="text-primary font-black">Color</span>
+              <span className="text-red-500 font-black">Lab</span>
             </span>
-            <span className="text-[9px] text-gray-text font-bold uppercase tracking-widest mt-0.5">
-              MANAGEMENT PORTAL
+            <span className="text-[9px] text-primary font-bold uppercase tracking-widest mt-0.5">
+              ADMIN PORTAL <span className="text-gray-400 font-normal lowercase tracking-normal">| Experience The Excellence</span>
             </span>
           </div>
 

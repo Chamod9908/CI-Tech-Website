@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { ShoppingBag, Eye, AlertTriangle, ArrowUpDown, Plus } from 'lucide-react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import ProductRowActions from '@/components/admin/ProductRowActions';
 
 export const revalidate = 0;
 
@@ -143,11 +144,7 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
                         </span>
                       </td>
                       <td className="p-4 text-center">
-                        <Link href={`/admin/products/${p.id}`}>
-                          <Button size="sm" variant="outline" className="text-[10px] py-1 px-2.5 font-bold gap-1 mx-auto">
-                            <Eye size={12} /> Edit
-                          </Button>
-                        </Link>
+                        <ProductRowActions productId={p.id} isActive={p.isActive} />
                       </td>
                     </tr>
                   );

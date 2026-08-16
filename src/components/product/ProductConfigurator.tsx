@@ -47,7 +47,8 @@ export default function ProductConfigurator({ product }: ProductConfiguratorProp
   const [selectedOptions, setSelectedOptions] = useState<Record<string, { value: string; priceAdjustment: number }>>(() => {
     const defaults: Record<string, { value: string; priceAdjustment: number }> = {};
     product.options.forEach((opt) => {
-      if (opt.values && opt.values.length > 0) {
+      // Auto-select initial value only if option is required
+      if (opt.isRequired && opt.values && opt.values.length > 0) {
         defaults[opt.name] = {
           value: opt.values[0].value,
           priceAdjustment: Number(opt.values[0].priceAdjustment),
@@ -74,11 +75,20 @@ export default function ProductConfigurator({ product }: ProductConfiguratorProp
   const currentUnitPrice = basePrice + optionAdjustments;
   const totalPrice = currentUnitPrice * quantity;
 
-  const handleOptionChange = (optionName: string, valueStr: string, priceAdjustment: number) => {
-    setSelectedOptions((prev) => ({
-      ...prev,
-      [optionName]: { value: valueStr, priceAdjustment },
-    }));
+  const handleOptionChange = (opt: OptionType, valueStr: string, priceAdjustment: number) => {
+    setSelectedOptions((prev) => {
+      const isCurrentlySelected = prev[opt.name]?.value === valueStr;
+      // Allow deselecting/toggling off if optional or if clicking active choice
+      if (isCurrentlySelected && (!opt.isRequired || valueStr.toLowerCase().includes('none'))) {
+        const copy = { ...prev };
+        delete copy[opt.name];
+        return copy;
+      }
+      return {
+        ...prev,
+        [opt.name]: { value: valueStr, priceAdjustment },
+      };
+    });
   };
 
   // Drag & drop file upload
@@ -130,6 +140,15 @@ export default function ProductConfigurator({ product }: ProductConfiguratorProp
   };
 
   const handleAddToCart = () => {
+    // Check required options selection
+    const missingRequiredOpt = product.options.find(
+      (opt) => opt.isRequired && !selectedOptions[opt.name]
+    );
+    if (missingRequiredOpt) {
+      setUploadError(`Please select a choice for "${missingRequiredOpt.name}".`);
+      return;
+    }
+
     // Check if files are uploaded for options that might require them (e.g. photo print)
     const requiresUpload = product.slug.includes('print') || product.slug.includes('mug') || product.slug.includes('frame');
     if (requiresUpload && uploadedFiles.length === 0) {
@@ -225,7 +244,7 @@ export default function ProductConfigurator({ product }: ProductConfiguratorProp
                 return (
                   <button
                     key={val.id}
-                    onClick={() => handleOptionChange(opt.name, val.value, adj)}
+                    onClick={() => handleOptionChange(opt, val.value, adj)}
                     className={`text-xs font-semibold px-4 py-2.5 rounded-lg border transition-all ${
                       isSelected
                         ? 'border-primary bg-primary/10 text-primary font-bold'
